@@ -14,7 +14,7 @@ contract ConstantImmutable {
 
     /// @dev constantは初期値の指定が必要
     string text = "TEXT";
-    string public constant feeling = "good";
+    string public constant feeling = "good"; // 変更不可
 
     /// @dev immutableは初期値なしでもOK。しかしその場合constructorでの初期値定義が必要
     // state visibilityでGetter Functionの生成と併用可能

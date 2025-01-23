@@ -16,6 +16,7 @@ pragma solidity ^0.8.17;
 /** @dev 
  * receive()は、Ether がコントラクトに送信され、 calldata が提供されない (ファンクションが指定されない) 場合のフォールバックファンクションとして使用される
  * これは任意の値を取ることができる。receive() ファンクションが存在しない場合、fallback()が次に呼び出される。
+ * 順番が重要 receive() ⇒ fallback() fallbackは他のコントラクトをコールもできる。
  * 1つのコントラクトは、最大で1つの receive() ファンクションを持つことができる。
  * msg.dataが空である必要がある
  * 
@@ -50,6 +51,7 @@ contract ReceiveEther {
     return address(this).balance;
   }
   
+  // fallbackとreceiveメソッドの実装
   fallback() external payable { s = "fallback"; message = msg.data;}
   receive() external payable { s = "receive"; }
 }
@@ -62,6 +64,7 @@ contract FallbackOnly {
     return address(this).balance;
   }
   
+  // fallbackメソッド
   fallback() external payable { s = "fallback"; message = msg.data;}
 }
 
@@ -82,6 +85,7 @@ contract SendEther {
       bytes memory
     ) {
       address payable receiveEther = payable(address(addr));
+      // ReceiveEtherコントラクト宛にETHを送金する。
       (bool result, bytes memory data) = receiveEther.call{value: msg.value}("");
       return (result, data);
     }
@@ -95,6 +99,7 @@ contract SendEther {
       bytes memory
     ) {
       address payable receiveEther = payable(address(addr));
+      // ReceiveEtherコントラクト宛にETHを送金する。
       (bool result, bytes memory data) = receiveEther.call{value: msg.value}(
         abi.encodeWithSignature("hogehoge()")
       );
@@ -109,6 +114,8 @@ contract SendEther {
       bytes memory
     ) {
       address payable fallbackOnly = payable(address(addr));
+      // FallbackOnlyコントラクト宛にETHを送金する。
+      // fallback()メソッドが呼び出される。
       (bool result, bytes memory data) = fallbackOnly.call{value: msg.value}("");
       return (result, data);
     }
@@ -121,6 +128,7 @@ contract SendEther {
       bytes memory
     ) {
       address payable cannotReceiveEther = payable(address(addr));
+      // CannotReceiveEtherコントラクト宛にETHを送金する。
       (bool result, bytes memory data) = cannotReceiveEther.call{value: msg.value}("");
       return (result, data);
     }
