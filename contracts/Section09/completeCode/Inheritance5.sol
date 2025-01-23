@@ -51,7 +51,7 @@ contract D is A, B, C {
         super.f();
     }
 }
-/// @dev Eに近いコントラクトをBにする場合
+/// @dev Eに近いコントラクトをBにする場合　一つ親のインスタンスが実行される。
 // AはC, Bから継承しているため記述を省いて良い
 contract E is C, B {
     // 0: A
